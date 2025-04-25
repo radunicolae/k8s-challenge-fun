@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/part-of: hello-world
     app.kubernetes.io/managed-by: kubectl
   annotations:
+    monitoring: "enabled"
     prometheus.io/scrape: "true"
     prometheus.io/port: "8080"
 spec:
