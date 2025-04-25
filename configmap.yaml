@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-world-cm
+  labels:
+    app.kubernetes.io/name: hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: configmap
+    app.kubernetes.io/part-of: hello-world
+    app.kubernetes.io/managed-by: kubectl
+data:
+  config.json: |
+    {
+      "ping": "pong"
+    }

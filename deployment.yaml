@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+  labels:
+    app.kubernetes.io/name: hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: deployment
+    app.kubernetes.io/part-of: hello-world
+    app.kubernetes.io/managed-by: kubectl
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-world
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-world
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - hello-world
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: hello-world
+          image: pvermeyden/nodejs-hello-world
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/config.json
+              subPath: config.json
+          readinessProbe:
+            httpGet:
+              path: /status/ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /status/ready
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: hello-world-cm

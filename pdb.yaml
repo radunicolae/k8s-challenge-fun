@@ -1,0 +1,15 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hello-world-pdb
+  labels:
+    app.kubernetes.io/name: hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: pdb
+    app.kubernetes.io/part-of: hello-world
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hello-world
