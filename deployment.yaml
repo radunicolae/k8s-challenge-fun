@@ -39,7 +39,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: hello-world
-          image: pvermeyden/nodejs-hello-world
+          image: pvermeyden/nodejs-hello-world:latest
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -54,7 +54,7 @@ spec:
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /status/ready
+              path: /status/live
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 20
